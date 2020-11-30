@@ -1,7 +1,9 @@
 package com.rocha.service.impl;
 
 
+import java.util.ArrayList;
 import java.util.List;
+
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import com.rocha.entity.Digimon;
 import com.rocha.repository.DigimonRepository;
 import com.rocha.service.DigimonService;
 
+
+
 @Service
 public class DigimonServiceImpl implements DigimonService{
 	
@@ -19,32 +23,64 @@ public class DigimonServiceImpl implements DigimonService{
     private ModelMapper modelMapper;
 
     @Autowired
-    private DigimonRepository DigimonRepository;
+    private DigimonRepository digimonRepository;
+    
+    @Autowired
+    private DigimonRegisterDto digimonRegisterDto;
+
 
     @Override
     public DigimonRegisterDto createDigimon(DigimonRegisterDto digimonRegisterDto) {
         Digimon digimon = modelMapper.map(digimonRegisterDto, Digimon.class);
-       digimon = DigimonRepository.save(digimon);
-       System.out.println();
+        System.out.println(digimonRegisterDto.getName());
+        digimon = digimonRepository.save(digimon);
+     
         return modelMapper.map(digimon, DigimonRegisterDto.class);
     }
 
 	@Override
 	public List<DigimonRegisterDto> getAllDigimon() {
-		// TODO Auto-generated method stub
-		return null;
+		  Iterable<Digimon> digimons = digimonRepository.findAll();
+          List<DigimonRegisterDto> digimonsDto = new ArrayList<DigimonRegisterDto>();
+          for (Digimon digimon : digimons) {
+              DigimonRegisterDto digimonParse = modelMapper.map(digimon, DigimonRegisterDto.class);
+              digimonsDto.add(digimonParse);
+          }
+      return digimonsDto;
 	}
 
 	@Override
 	public DigimonRegisterDto getDigimonByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		 List<Digimon> digimon =  digimonRepository.findDigimonEntityByName(name);
+			        
+			        return modelMapper.map(digimon, DigimonRegisterDto.class);
 	}
 
 	@Override
 	public Boolean existsDigimonByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+	     List<Digimon> agency = digimonRepository.findDigimonEntityByName(name);
+	        if (agency.size() > 0) {
+	            return true;
+	        }
+	        return false;
+
 	}
+
+	@Override
+	public void deleteDigimonByName(String name) {
+		 digimonRepository.deleteByName(name);
+		
+	}
+
+	@Override
+	public DigimonRegisterDto editDigimonByName(String name, DigimonRegisterDto dto) {
+		   Digimon digimon =  (Digimon) digimonRepository.findDigimonEntityByName(name);
+			        digimon.setName(digimonRegisterDto.getName());
+			        digimon.setLevel(digimonRegisterDto.getLevel());
+			        digimon.setUrl(digimonRegisterDto.getUrl());
+			        digimonRepository.save(digimon);
+			        return modelMapper.map(digimon, DigimonRegisterDto.class);
+	}
+
 
 }

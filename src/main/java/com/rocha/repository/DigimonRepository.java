@@ -11,6 +11,9 @@ import com.rocha.entity.Digimon;
 
 @Repository
 @Table(name = "digimon")
-public interface DigimonRepository extends JpaRepository<Digimon, String> {
+public interface DigimonRepository extends JpaRepository<Digimon, Long> {
 	List<Digimon> findDigimonEntityByName(String name);
+
+	void deleteByName(String name);
+
 }
