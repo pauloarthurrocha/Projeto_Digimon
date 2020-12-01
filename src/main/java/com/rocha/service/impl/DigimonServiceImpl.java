@@ -25,7 +25,7 @@ public class DigimonServiceImpl implements DigimonService{
     @Autowired
     private DigimonRepository digimonRepository;
     
-    @Autowired
+    @Autowired(required = false)
     private DigimonRegisterDto digimonRegisterDto;
 
 
@@ -68,7 +68,7 @@ public class DigimonServiceImpl implements DigimonService{
 
 	@Override
 	public void deleteDigimonByName(String name) {
-		 digimonRepository.deleteByName(name);
+		 digimonRepository.deleteAll();
 		
 	}
 
