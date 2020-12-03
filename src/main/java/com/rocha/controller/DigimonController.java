@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rocha.dto.digimon.DigimonRegisterDto;
+import com.rocha.dto.digimon.DigimonResponseDto;
 import com.rocha.dto.error.ErrorDto;
 import com.rocha.service.DigimonService;
 
@@ -39,7 +40,7 @@ public class DigimonController {
 		}
 	}
 
-	@GetMapping("/name")
+	@GetMapping("/{name}")
 	ResponseEntity<?> getDigimonByName(@PathVariable String name) {
 		try {
 			return new ResponseEntity<DigimonRegisterDto>(digimonService.getDigimonByName(name), HttpStatus.OK);
@@ -68,9 +69,9 @@ public class DigimonController {
 	}
 
 	@PutMapping(value = "/{name}")
-	ResponseEntity<?> editAgencyById(@PathVariable String name, @RequestBody DigimonRegisterDto digimonRegisterDto) {
+	ResponseEntity<?> editDigimonByName(@PathVariable String name, @RequestBody DigimonRegisterDto digimonRegisterDto) {
 		try {
-			return new ResponseEntity<DigimonRegisterDto>(digimonService.editDigimonByName(name, digimonRegisterDto),
+			return new ResponseEntity<DigimonResponseDto>(digimonService.editDigimonByName(name, digimonRegisterDto),
 					HttpStatus.OK);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

@@ -8,8 +8,10 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.rocha.dto.digimon.DigimonRegisterDto;
+import com.rocha.dto.digimon.DigimonResponseDto;
 import com.rocha.entity.Digimon;
 import com.rocha.repository.DigimonRepository;
 import com.rocha.service.DigimonService;
@@ -25,8 +27,6 @@ public class DigimonServiceImpl implements DigimonService{
     @Autowired
     private DigimonRepository digimonRepository;
     
-    @Autowired(required = false)
-    private DigimonRegisterDto digimonRegisterDto;
 
 
     @Override
@@ -51,14 +51,14 @@ public class DigimonServiceImpl implements DigimonService{
 
 	@Override
 	public DigimonRegisterDto getDigimonByName(String name) {
-		 List<Digimon> digimon =  digimonRepository.findDigimonEntityByName(name);
+		 Digimon digimon =  digimonRepository.getDigimonByName(name);
 			        
 			        return modelMapper.map(digimon, DigimonRegisterDto.class);
 	}
 
 	@Override
 	public Boolean existsDigimonByName(String name) {
-	     List<Digimon> agency = digimonRepository.findDigimonEntityByName(name);
+	     List<Digimon> agency = digimonRepository.findDigimonByName(name);
 	        if (agency.size() > 0) {
 	            return true;
 	        }
@@ -66,21 +66,23 @@ public class DigimonServiceImpl implements DigimonService{
 
 	}
 
+	@Transactional
 	@Override
 	public void deleteDigimonByName(String name) {
-		 digimonRepository.deleteAll();
+		 digimonRepository.deleteByName(name);
 		
 	}
 
 	@Override
-	public DigimonRegisterDto editDigimonByName(String name, DigimonRegisterDto dto) {
-		   Digimon digimon =  (Digimon) digimonRepository.findDigimonEntityByName(name);
-			        digimon.setName(digimonRegisterDto.getName());
-			        digimon.setLevel(digimonRegisterDto.getLevel());
-			        digimon.setUrl(digimonRegisterDto.getUrl());
-			        digimonRepository.save(digimon);
-			        return modelMapper.map(digimon, DigimonRegisterDto.class);
+	public DigimonResponseDto editDigimonByName(String name, DigimonRegisterDto dto) {
+		  Digimon digimon = digimonRepository.getDigimonByName(name);
+		  digimon.setName(dto.getName());
+		  digimon.setLevel(dto.getLevel());
+		  digimon.setUrl(dto.getUrl());
+		   digimonRepository.save(digimon);
+			        return modelMapper.map(digimon, DigimonResponseDto.class);
 	}
 
+	
 
 }
